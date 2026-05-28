@@ -27,7 +27,7 @@
   .hero-inner{position:relative; z-index:3; width:100%}
   .blk{opacity:0; transform:translateY(26px); transition:opacity .85s cubic-bezier(.16,.84,.24,1), transform .85s cubic-bezier(.16,.84,.24,1)}
   .booted .blk{opacity:1; transform:none}
-  .booted .b1{transition-delay:3.55s}.booted .b2{transition-delay:3.72s}.booted .b3{transition-delay:3.88s}.booted .b4{transition-delay:4.04s}
+  .booted .b1{transition-delay:.06s}.booted .b2{transition-delay:.2s}.booted .b3{transition-delay:.34s}.booted .b4{transition-delay:.48s}
 
   h1{font-size:clamp(34px,5.4vw,64px); font-weight:800; letter-spacing:-.03em; line-height:1.02}
   h1 .o{background:linear-gradient(100deg,#39ff9e,#9effcb); -webkit-background-clip:text; background-clip:text; color:transparent}
@@ -46,9 +46,9 @@
   nav{position:fixed; top:0; left:0; right:0; z-index:20; padding:18px 0; transition:.25s}
   nav.solid{background:rgba(5,8,15,.8); backdrop-filter:blur(16px); box-shadow:0 1px 0 rgba(57,255,158,.12); padding:12px 0}
   .nav-in{display:flex; align-items:center; justify-content:space-between; gap:24px}
-  .mark{font-size:21px; font-weight:800; letter-spacing:-.03em; color:#fff; text-decoration:none; opacity:0; transition:opacity .7s ease 3.5s} .booted .mark{opacity:1}
-  .nav-links{display:flex; gap:26px; opacity:0; transition:opacity .6s ease 3.9s} .nav-links a{color:#c7d3e8; text-decoration:none; font-size:15px; font-weight:500} .nav-links a:hover{color:#fff} .booted .nav-links{opacity:1}
-  .nav-cta{color:#042; background:linear-gradient(180deg,#3dffa0,#19c96f); padding:9px 18px; border-radius:10px; text-decoration:none; font-weight:800; font-size:14px; opacity:0; transition:opacity .6s ease 3.9s} .booted .nav-cta{opacity:1}
+  .mark{font-size:21px; font-weight:800; letter-spacing:-.03em; color:#fff; text-decoration:none; opacity:0; transition:opacity .6s ease .06s} .booted .mark{opacity:1}
+  .nav-links{display:flex; gap:26px; opacity:0; transition:opacity .6s ease .4s} .nav-links a{color:#c7d3e8; text-decoration:none; font-size:15px; font-weight:500} .nav-links a:hover{color:#fff} .booted .nav-links{opacity:1}
+  .nav-cta{color:#042; background:linear-gradient(180deg,#3dffa0,#19c96f); padding:9px 18px; border-radius:10px; text-decoration:none; font-weight:800; font-size:14px; opacity:0; transition:opacity .6s ease .4s} .booted .nav-cta{opacity:1}
   @media(max-width:760px){.nav-links{display:none}}
 
   section.band{padding:96px 0; position:relative}
@@ -152,7 +152,7 @@
     ctx.strokeStyle='#9dd8ff';ctx.beginPath();ctx.moveTo(-.78*s,-.05*s);ctx.lineTo(-.78*s,.9*s);ctx.lineTo(.78*s,.9*s);ctx.lineTo(.78*s,-.05*s);ctx.stroke();ctx.restore();}
 
   // timeline: chaos -> BLACK HOLE ignites & devours everything -> collapse + bloom -> page
-  var CHAOS=1150, DEVOUR_END=3050, BLOOM=3150, BOOT=3450, END=3950, booted=false, stop=false, start=null;
+  var CHAOS=1100, DEVOUR_END=2850, BLOOM=2950, BOOT=3150, END=3800, booted=false, stop=false, start=null;
   function ease3(t){t=Math.max(0,Math.min(1,t));return 1-Math.pow(1-t,3);}
 
   function drawHole(el){
