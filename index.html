@@ -3,248 +3,147 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Realestart — chaos, ordered.</title>
+<title>Realestart — order in, chaos out.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#0b1220; --ink-2:#0a0f1c; --blue:#0071e3; --blue-lt:#3b9bff;
-    --green:#23c552; --green-deep:#1a7f37; --paper:#f7f9fc; --muted:#8a94a6;
-    --line:rgba(255,255,255,.10); --card:rgba(255,255,255,.04);
+    --ink:#0b1220; --blue:#0071e3; --blue-lt:#3b9bff;
+    --green:#23c552; --mtx:#39ff9e; --mtx-deep:#0e7a3f;
+    --muted:#8a94a6; --line:rgba(255,255,255,.10); --card:rgba(255,255,255,.04);
     --font:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
     --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
   }
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
-  body{
-    font-family:var(--font); color:#eaf0fb; background:var(--ink-2);
-    -webkit-font-smoothing:antialiased; overflow-x:hidden;
-  }
+  body{font-family:var(--font); color:#eaf0fb; background:#05080f; -webkit-font-smoothing:antialiased; overflow-x:hidden}
   .wrap{width:min(1140px,100% - 48px);margin:0 auto}
 
   /* ===== HERO ===== */
-  .hero{
-    position:relative; min-height:100vh; display:flex; align-items:center;
-    background:
-      radial-gradient(1200px 700px at 75% 12%, rgba(0,113,227,.20), transparent 60%),
-      radial-gradient(900px 600px at 10% 90%, rgba(35,197,82,.10), transparent 55%),
-      linear-gradient(180deg,#070b15 0%, #0a0f1c 60%, #0b1220 100%);
-    overflow:hidden;
-  }
+  .hero{position:relative; min-height:100vh; display:flex; align-items:flex-end; overflow:hidden;
+    background:radial-gradient(1100px 700px at 50% 22%, rgba(13,40,26,.55), transparent 62%),
+               radial-gradient(900px 600px at 80% 90%, rgba(0,113,227,.16), transparent 55%),
+               linear-gradient(180deg,#04070d 0%, #060b14 70%, #0b1220 100%);}
   #fx{position:absolute; inset:0; width:100%; height:100%; z-index:1; display:block}
-  /* faint order-grid that fades in as chaos resolves */
-  .grid{
-    position:absolute; inset:0; z-index:0; opacity:0;
-    background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),
-                     linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);
-    background-size:46px 46px; mask-image:radial-gradient(circle at 50% 42%, #000 30%, transparent 78%);
-    transition:opacity 1.2s ease 1.5s;
-  }
-  .booted .grid{opacity:1}
+  .scan{position:absolute; inset:0; z-index:2; pointer-events:none; opacity:.5;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,0) 0 2px, rgba(0,0,0,.18) 2px 3px); mix-blend-mode:overlay}
+  .vignette{position:absolute; inset:0; z-index:2; pointer-events:none;
+    background:radial-gradient(120% 90% at 50% 38%, transparent 55%, rgba(0,0,0,.6))}
 
-  .hero-inner{position:relative; z-index:3; width:100%; padding:120px 0 80px}
-  .hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:48px; align-items:center}
-  @media(max-width:900px){.hero-grid{grid-template-columns:1fr; gap:36px}}
+  .hero-inner{position:relative; z-index:3; width:100%; padding:0 0 9vh}
+  .hero-copy{max-width:760px; opacity:0; transform:translateY(20px); transition:opacity .9s ease 2.9s, transform .9s ease 2.9s}
+  .booted .hero-copy{opacity:1; transform:none}
+  .booted .hc.d2{transition-delay:3.05s}.booted .hc.d3{transition-delay:3.2s}
+  .booted .hc.d4{transition-delay:3.35s}.booted .hc.d5{transition-delay:3.5s}
+  .hc{opacity:0; transform:translateY(18px); transition:opacity .8s ease, transform .8s ease}
+  .booted .hc{opacity:1; transform:none}
 
-  /* hero text reveals AFTER the chaos forms */
-  .reveal{opacity:0; transform:translateY(22px); transition:opacity .8s ease, transform .8s ease}
-  .booted .reveal{opacity:1; transform:none}
-  .reveal.d1{transition-delay:2.05s}.reveal.d2{transition-delay:2.2s}
-  .reveal.d3{transition-delay:2.35s}.reveal.d4{transition-delay:2.5s}
-  .reveal.d5{transition-delay:2.65s}.reveal.d6{transition-delay:2.8s}
-
-  .badge{
-    display:inline-flex; align-items:center; gap:9px; font-size:13px; font-weight:600;
-    color:#bcd4f5; background:rgba(0,113,227,.12); border:1px solid rgba(59,155,255,.28);
-    padding:7px 14px; border-radius:999px; letter-spacing:.01em;
-  }
-  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 12px var(--green)}
-  h1{
-    font-size:clamp(40px,6.2vw,74px); line-height:1.02; font-weight:800;
-    letter-spacing:-.035em; margin:22px 0 0;
-  }
-  h1 .g{
-    background:linear-gradient(100deg,#3b9bff 0%,#7cc6ff 50%,#23c552 110%);
-    -webkit-background-clip:text; background-clip:text; color:transparent;
-  }
-  .sub{font-size:clamp(16px,1.9vw,20px); color:#aebbd2; line-height:1.55; max-width:560px; margin:22px 0 0}
-  .ctas{display:flex; gap:14px; flex-wrap:wrap; margin:34px 0 0}
-  .btn{
-    font:inherit; font-weight:700; font-size:16px; border:none; cursor:pointer;
-    padding:15px 26px; border-radius:13px; text-decoration:none; display:inline-flex; align-items:center; gap:9px;
-    transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
-  }
-  .btn-primary{color:#fff; background:linear-gradient(180deg,#1488ff,#0071e3); box-shadow:0 10px 30px rgba(0,113,227,.45)}
-  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 16px 40px rgba(0,113,227,.6)}
+  .badge{display:inline-flex; align-items:center; gap:9px; font-size:13px; font-weight:600; color:#bff4d4;
+    background:rgba(35,197,82,.10); border:1px solid rgba(57,255,158,.3); padding:7px 14px; border-radius:999px}
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--mtx);box-shadow:0 0 12px var(--mtx)}
+  h1{font-size:clamp(40px,6.4vw,76px); line-height:1.0; font-weight:800; letter-spacing:-.035em; margin:20px 0 0}
+  h1 .o{background:linear-gradient(100deg,#39ff9e,#7cffc4); -webkit-background-clip:text; background-clip:text; color:transparent}
+  h1 .c{background:linear-gradient(100deg,#3b9bff,#7cc6ff); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .sub{font-size:clamp(16px,1.9vw,20px); color:#b3c0d8; line-height:1.55; max-width:600px; margin:22px 0 0}
+  .sub b{color:#dfe9fb}
+  .ctas{display:flex; gap:14px; flex-wrap:wrap; margin:32px 0 0}
+  .btn{font:inherit; font-weight:700; font-size:16px; border:none; cursor:pointer; padding:15px 26px; border-radius:13px;
+    text-decoration:none; display:inline-flex; align-items:center; gap:9px; transition:transform .18s, box-shadow .18s, background .18s}
+  .btn-primary{color:#031; background:linear-gradient(180deg,#3dffa0,#19c96f); box-shadow:0 10px 30px rgba(35,197,82,.4); font-weight:800}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 16px 42px rgba(35,197,82,.6)}
   .btn-ghost{color:#dce7fb; background:rgba(255,255,255,.05); border:1px solid var(--line)}
   .btn-ghost:hover{background:rgba(255,255,255,.10); transform:translateY(-2px)}
-  .trust{display:flex; gap:20px; flex-wrap:wrap; margin:30px 0 0; color:#9fb0cc; font-size:14px; font-weight:500}
-  .trust span{display:inline-flex; align-items:center; gap:7px}
-  .trust b{color:var(--green)}
+  .trust{display:flex; gap:20px; flex-wrap:wrap; margin:28px 0 0; color:#9fb0cc; font-size:14px; font-weight:500}
+  .trust span{display:inline-flex; align-items:center; gap:7px} .trust b{color:var(--mtx)}
 
-  /* the "document forms" panel on the right */
-  .doc-stage{position:relative; height:380px}
-  .papers .sheet{
-    position:absolute; left:50%; top:50%; width:230px; height:300px; border-radius:14px;
-    background:linear-gradient(180deg,#fff,#eef3fb); box-shadow:0 30px 70px rgba(0,0,0,.5);
-    transform:translate(-50%,-50%); opacity:0; padding:22px 20px;
-  }
-  .booted .papers .sheet{animation:flyIn 1.9s cubic-bezier(.16,.84,.3,1) forwards}
-  .papers .sheet:nth-child(1){--tx:-26px;--ty:14px;--rot:-7deg;animation-delay:.15s;z-index:1}
-  .papers .sheet:nth-child(2){--tx:14px;--ty:-10px;--rot:5deg;animation-delay:.32s;z-index:2}
-  .papers .sheet:nth-child(3){--tx:0px;--ty:0px;--rot:0deg;animation-delay:.5s;z-index:3}
-  @keyframes flyIn{
-    0%{opacity:0; transform:translate(calc(-50% + var(--sx,-380px)),calc(-50% + var(--sy,260px))) rotate(var(--sr,-40deg)) scale(.6)}
-    55%{opacity:1}
-    100%{opacity:1; transform:translate(calc(-50% + var(--tx)),calc(-50% + var(--ty))) rotate(var(--rot)) scale(1)}
-  }
-  .papers .sheet:nth-child(1){--sx:-460px;--sy:320px;--sr:-55deg}
-  .papers .sheet:nth-child(2){--sx:520px;--sy:-300px;--sr:48deg}
-  .papers .sheet:nth-child(3){--sx:120px;--sy:420px;--sr:30deg}
-  .sheet .row{height:9px;border-radius:4px;background:#dde6f3;margin:0 0 12px}
-  .sheet .row.k{background:#c5d6ef;width:55%}
-  .sheet .row.fill{background:linear-gradient(90deg,#1488ff,#3b9bff);width:0;animation:none}
-  .booted .sheet .row.fill{animation:fillBar 1s ease forwards}
-  .sheet:nth-child(3) .row.fill{animation-delay:2.0s}
-  @keyframes fillBar{from{width:0}to{width:var(--w,80%)}}
-  .sheet .stamp{
-    position:absolute; right:16px; bottom:16px; width:42px; height:42px; border-radius:50%;
-    border:2px solid var(--green); color:var(--green); display:grid; place-items:center; font-weight:800;
-    font-size:20px; opacity:0; transform:scale(.4) rotate(-20deg);
-  }
-  .booted .sheet:nth-child(3) .stamp{animation:stamp .5s ease 2.5s forwards}
-  @keyframes stamp{to{opacity:1; transform:scale(1) rotate(-12deg)}}
-
-  /* skip-intro hint */
-  .skip{position:absolute; z-index:4; right:22px; bottom:18px; font-size:12px; color:#5f6f8c;
+  .skip{position:absolute; z-index:4; right:22px; bottom:18px; font-size:12px; color:#5f6f8c; font-family:var(--mono);
     background:rgba(255,255,255,.04); border:1px solid var(--line); padding:6px 11px; border-radius:8px; cursor:pointer}
-  .booted .skip{display:none}
+  .booted .skip{opacity:0; pointer-events:none; transition:opacity .5s}
 
   /* nav */
   nav{position:fixed; top:0; left:0; right:0; z-index:20; padding:18px 0; transition:.25s}
-  nav.solid{background:rgba(7,11,21,.72); backdrop-filter:blur(16px); box-shadow:0 1px 0 rgba(255,255,255,.06); padding:12px 0}
+  nav.solid{background:rgba(5,8,15,.78); backdrop-filter:blur(16px); box-shadow:0 1px 0 rgba(57,255,158,.12); padding:12px 0}
   .nav-in{display:flex; align-items:center; justify-content:space-between; gap:24px}
-  .mark{font-size:22px; font-weight:800; letter-spacing:-.03em; color:#fff; text-decoration:none}
-  .mark .o{color:var(--blue-lt)}
-  .nav-links{display:flex; gap:26px}
-  .nav-links a{color:#c7d3e8; text-decoration:none; font-size:15px; font-weight:500}
+  .mark{font-family:var(--mono); font-size:20px; font-weight:700; letter-spacing:-.02em; color:#fff; text-decoration:none}
+  .mark .b{color:var(--mtx)}
+  .nav-links{display:flex; gap:26px} .nav-links a{color:#c7d3e8; text-decoration:none; font-size:15px; font-weight:500}
   .nav-links a:hover{color:#fff}
-  .nav-cta{color:#fff; background:linear-gradient(180deg,#1488ff,#0071e3); padding:9px 18px; border-radius:10px; text-decoration:none; font-weight:700; font-size:14px}
+  .nav-cta{color:#031; background:linear-gradient(180deg,#3dffa0,#19c96f); padding:9px 18px; border-radius:10px; text-decoration:none; font-weight:800; font-size:14px}
   @media(max-width:760px){.nav-links{display:none}}
 
-  /* ===== SECTIONS ===== */
+  /* sections */
   section.band{padding:96px 0; position:relative}
-  .logos{text-align:center; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:#0b1220}
+  .logos{text-align:center; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:#070c15}
   .logos .label{color:var(--muted); font-size:13px; font-weight:600; letter-spacing:.14em; text-transform:uppercase}
   .logos-row{display:flex; gap:14px 46px; justify-content:center; flex-wrap:wrap; margin-top:26px}
   .logos-row span{font-size:24px; font-weight:800; color:#5d6b85; letter-spacing:-.02em; transition:color .2s}
-  .logos-row span:hover{color:#cdd8ec}
-
+  .logos-row span:hover{color:#bff4d4}
   .h2{font-size:clamp(28px,4vw,44px); font-weight:800; letter-spacing:-.03em; text-align:center}
-  .h2 .g{background:linear-gradient(100deg,#3b9bff,#23c552); -webkit-background-clip:text; background-clip:text; color:transparent}
-  .lead{color:#a6b4cd; text-align:center; max-width:620px; margin:16px auto 0; font-size:18px; line-height:1.55}
-
+  .h2 .g{background:linear-gradient(100deg,#39ff9e,#3b9bff); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .lead{color:#a6b4cd; text-align:center; max-width:640px; margin:16px auto 0; font-size:18px; line-height:1.55}
   .pipe{display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-top:60px}
-  @media(max-width:860px){.pipe{grid-template-columns:1fr 1fr; gap:18px}}
-  .node{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:26px 18px; text-align:center; position:relative}
-  .node .ico{font-size:30px}
-  .node .t{font-weight:700; margin-top:12px; font-size:16px}
-  .node .s{color:var(--muted); font-size:13px; margin-top:5px}
-  .node.win{border-color:rgba(35,197,82,.4); box-shadow:0 0 0 1px rgba(35,197,82,.2), 0 20px 50px rgba(35,197,82,.10)}
-  .node.win .ico{color:var(--green)}
-
+  @media(max-width:860px){.pipe{grid-template-columns:1fr 1fr}}
+  .node{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:26px 18px; text-align:center}
+  .node .ico{font-size:30px}.node .t{font-weight:700; margin-top:12px; font-size:16px}.node .s{color:var(--muted); font-size:13px; margin-top:5px}
+  .node.win{border-color:rgba(57,255,158,.45); box-shadow:0 0 0 1px rgba(57,255,158,.2), 0 20px 50px rgba(35,197,82,.12)} .node.win .ico{color:var(--mtx)}
   .feat{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:56px}
   @media(max-width:860px){.feat{grid-template-columns:1fr}}
   .fcard{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:30px 26px}
-  .fcard .fi{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:22px;
-    background:rgba(0,113,227,.14); border:1px solid rgba(59,155,255,.3)}
-  .fcard h3{font-size:20px; margin:18px 0 8px; letter-spacing:-.02em}
-  .fcard p{color:#a6b4cd; line-height:1.6; font-size:15px}
-
-  .cta-band{text-align:center; background:radial-gradient(900px 400px at 50% 0%, rgba(0,113,227,.20), transparent 60%)}
-  .cta-band .btn{margin-top:30px}
-
-  footer{border-top:1px solid var(--line); padding:40px 0; color:#6c7a94; font-size:14px; text-align:center; background:#070b15}
+  .fcard .fi{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-size:22px; background:rgba(35,197,82,.13); border:1px solid rgba(57,255,158,.3)}
+  .fcard h3{font-size:20px; margin:18px 0 8px; letter-spacing:-.02em} .fcard p{color:#a6b4cd; line-height:1.6; font-size:15px}
+  .cta-band{text-align:center; background:radial-gradient(900px 400px at 50% 0%, rgba(35,197,82,.18), transparent 60%)}
+  footer{border-top:1px solid var(--line); padding:40px 0; color:#6c7a94; font-size:14px; text-align:center; background:#04070d}
   footer .mark{font-size:18px}
-
-  @media(prefers-reduced-motion:reduce){
-    .reveal{opacity:1!important;transform:none!important}
-    .papers .sheet{opacity:1!important;animation:none!important;transform:translate(-50%,-50%)!important}
-  }
+  @media(prefers-reduced-motion:reduce){.hero-copy,.hc{opacity:1!important;transform:none!important}}
 </style>
 </head>
 <body>
   <nav id="nav">
     <div class="wrap nav-in">
-      <a href="#" class="mark">realestart</a>
-      <div class="nav-links">
-        <a href="#how">How it works</a>
-        <a href="#accuracy">Accuracy</a>
-        <a href="#security">Security</a>
-      </div>
+      <a href="#top" class="mark">realestart</a>
+      <div class="nav-links"><a href="#how">How it works</a><a href="#accuracy">Accuracy</a><a href="#security">Security</a></div>
       <a href="#start" class="nav-cta">Get Started</a>
     </div>
   </nav>
 
-  <!-- ===== HERO ===== -->
   <header class="hero" id="top">
-    <div class="grid"></div>
     <canvas id="fx"></canvas>
+    <div class="scan"></div>
+    <div class="vignette"></div>
     <div class="skip" id="skip">skip intro ⏭</div>
     <div class="hero-inner">
-      <div class="wrap hero-grid">
-        <div>
-          <span class="badge reveal d1"><span class="dot"></span>Closing automation · Works with the software you already use</span>
-          <h1 class="reveal d2">Out of the chaos,<br><span class="g">a finished closing.</span></h1>
-          <p class="sub reveal d3">
-            Contracts, addendums, payoffs, emails — Realestart reads the mess, then automatically
-            enters every figure into <b>ProForm</b>, <b>SoftPro</b>, or whatever you run today.
-            Accurately. Verified field by field. No re-keying, no copy-and-paste, no double entry.
-          </p>
-          <div class="ctas reveal d4">
-            <a href="#start" class="btn btn-primary">Get Started — It's Free →</a>
-            <a href="#how" class="btn btn-ghost">See how it works</a>
-          </div>
-          <div class="trust reveal d5">
-            <span><b>✓</b> Verified field by field</span>
-            <span><b>✓</b> Built SOC&nbsp;2-first</span>
-            <span><b>✓</b> Keeps your current software</span>
-          </div>
+      <div class="wrap hero-copy">
+        <span class="badge hc d2"><span class="dot"></span>Closing automation · Works with the software you already use</span>
+        <h1 class="hc d3"><span class="o">Order in.</span> <span class="c">Chaos out.</span></h1>
+        <p class="sub hc d4">
+          Realestart tears through the contracts, payoffs, addendums and email — and lays every figure
+          neatly into <b>ProForm</b>, <b>SoftPro</b>, or whatever you run today. Verified field by field.
+          The order moves in. The mess goes out the door.
+        </p>
+        <div class="ctas hc d4">
+          <a href="#start" class="btn btn-primary">Get Started — It's Free →</a>
+          <a href="#how" class="btn btn-ghost">See how it works</a>
         </div>
-        <div class="doc-stage reveal d3">
-          <div class="papers">
-            <div class="sheet"><div class="row k"></div><div class="row"></div><div class="row"></div></div>
-            <div class="sheet"><div class="row k"></div><div class="row"></div><div class="row"></div><div class="row"></div></div>
-            <div class="sheet">
-              <div class="row k"></div>
-              <div class="row fill" style="--w:90%"></div>
-              <div class="row fill" style="--w:70%"></div>
-              <div class="row fill" style="--w:82%"></div>
-              <div class="row k" style="margin-top:18px"></div>
-              <div class="row fill" style="--w:60%"></div>
-              <div class="stamp">✓</div>
-            </div>
-          </div>
+        <div class="trust hc d5">
+          <span><b>✓</b> Verified field by field</span>
+          <span><b>✓</b> Built SOC&nbsp;2-first</span>
+          <span><b>✓</b> Keeps your current software</span>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- ===== WORKS WITH ===== -->
   <section class="band logos" id="how">
     <div class="wrap">
       <div class="label">Fills the closing software you already run</div>
-      <div class="logos-row">
-        <span>ProForm</span><span>SoftPro</span><span>Qualia</span><span>RamQuest</span><span>TitleExpress</span>
-      </div>
+      <div class="logos-row"><span>ProForm</span><span>SoftPro</span><span>Qualia</span><span>RamQuest</span><span>TitleExpress</span></div>
     </div>
   </section>
 
-  <!-- ===== PIPELINE ===== -->
   <section class="band" id="accuracy">
     <div class="wrap">
-      <h2 class="h2">Chaos in. <span class="g">Order out.</span></h2>
+      <h2 class="h2">A storm of data, <span class="g">sorted into your software.</span></h2>
       <p class="lead">Five steps, fully automatic — and we prove the result before it ever reaches you.</p>
       <div class="pipe">
         <div class="node"><div class="ico">📄</div><div class="t">Contract &amp; docs</div><div class="s">PDF · email · scan</div></div>
@@ -256,198 +155,159 @@
     </div>
   </section>
 
-  <!-- ===== FEATURES ===== -->
   <section class="band" id="security">
     <div class="wrap">
       <h2 class="h2">Why teams switch</h2>
       <div class="feat">
-        <div class="fcard"><div class="fi">⚡</div><h3>No more re-keying</h3><p>The data lands in your closing software automatically — the hours your team spends typing the same numbers twice simply disappear.</p></div>
+        <div class="fcard"><div class="fi">⚡</div><h3>No more re-keying</h3><p>Data lands in your closing software automatically — the hours your team spends typing the same numbers twice simply disappear.</p></div>
         <div class="fcard"><div class="fi">🎯</div><h3>Verified, not hoped</h3><p>Every field is checked against the source after it's entered. You get a field-by-field confirmation, not a black box.</p></div>
         <div class="fcard"><div class="fi">🔒</div><h3>Built SOC 2-first</h3><p>Least-privilege by design, encrypted in transit and at rest, audit-ready from day one. Your clients' data stays your clients' data.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- ===== CTA ===== -->
   <section class="band cta-band" id="start">
     <div class="wrap">
       <h2 class="h2">Bring order to your closings.</h2>
       <p class="lead">Keep the software you love. Lose the data entry.</p>
-      <a href="#" class="btn btn-primary">Get Started — It's Free →</a>
+      <a href="#" class="btn btn-primary" style="margin-top:30px">Get Started — It's Free →</a>
     </div>
   </section>
 
-  <footer>
-    <div class="wrap">
-      <a href="#top" class="mark">realestart</a>
-      <p style="margin-top:10px">Closing automation for title &amp; settlement teams · © 2026 Realestart</p>
-    </div>
-  </footer>
+  <footer><div class="wrap"><a href="#top" class="mark">realestart</a><p style="margin-top:10px">Closing automation for title &amp; settlement teams · © 2026 Realestart</p></div></footer>
 
 <script>
 (function(){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var canvas = document.getElementById('fx');
-  var ctx = canvas.getContext('2d');
-  var DPR = Math.min(window.devicePixelRatio||1, 2);
-  var W, H;
-  function size(){
-    var r = canvas.getBoundingClientRect();
-    W = r.width; H = r.height;
-    canvas.width = W*DPR; canvas.height = H*DPR;
-    ctx.setTransform(DPR,0,0,DPR,0,0);
-  }
+  var cv = document.getElementById('fx'), ctx = cv.getContext('2d');
+  var DPR = Math.min(window.devicePixelRatio||1, 2), W, H, cx, cy;
+  function size(){ var r=cv.getBoundingClientRect(); W=r.width; H=r.height; cv.width=W*DPR; cv.height=H*DPR; ctx.setTransform(DPR,0,0,DPR,0,0); cx=W/2; cy=H*0.40; }
   size();
+  var rnd=function(a,b){return a+Math.random()*(b-a)}, TWO=Math.PI*2;
 
-  // ---- Build target points by sampling the wordmark "realestart" ----
+  /* ---- sample the wordmark "realestart" into target points ---- */
   function buildTargets(){
-    var off = document.createElement('canvas');
-    var oc = off.getContext('2d');
-    off.width = W; off.height = H;
-    var fs = Math.min(W*0.135, 170);
-    oc.fillStyle = '#fff';
-    oc.font = '800 ' + fs + "px 'Plus Jakarta Sans', sans-serif";
-    oc.textAlign = 'center'; oc.textBaseline = 'middle';
-    var cx = W/2, cy = H*0.42;
+    var off=document.createElement('canvas'), oc=off.getContext('2d');
+    off.width=W; off.height=H;
+    var fs=Math.min(W*0.16, 188);
+    oc.fillStyle='#fff'; oc.font='800 '+fs+"px 'Plus Jakarta Sans', sans-serif";
+    oc.textAlign='center'; oc.textBaseline='middle';
     oc.fillText('realestart', cx, cy);
-    var img;
-    try { img = oc.getImageData(0,0,W,H).data; } catch(e){ return []; }
-    var pts = [], step = Math.max(4, Math.round(fs/28));
-    for(var y=0; y<H; y+=step){
-      for(var x=0; x<W; x+=step){
-        if(img[(y*W+x)*4+3] > 128){ pts.push({x:x, y:y}); }
-      }
-    }
+    var data; try{ data=oc.getImageData(0,0,W,H).data; }catch(e){ return []; }
+    var step=Math.max(5, Math.round(fs/26)), pts=[];
+    for(var y=0;y<H;y+=step) for(var x=0;x<W;x+=step) if(data[(y*W+x)*4+3]>128) pts.push({x:x,y:y});
     return pts;
   }
+  var targets=buildTargets();
 
-  var GLYPHS = ['0','1','0','1','$','0','1'];
-  var DATA = ['$340,000','123 Main St','Buyer','Seller','06/30/26','$1,275','APN 04-21','Lender','Escrow','Payoff','TN','$8,940','Title','0.75%','Deed'];
-  var rand = function(a,b){ return a + Math.random()*(b-a); };
-
-  var particles = [], targets = buildTargets();
-  var COUNT = targets.length;
-  // text-forming particles
-  for(var i=0;i<COUNT;i++){
-    var t = targets[i];
-    particles.push({
-      x: rand(0,W), y: rand(0,H),
-      vx: rand(-9,9), vy: rand(-9,9),
-      tx: t.x, ty: t.y, form:true,
-      ch: GLYPHS[(Math.random()*GLYPHS.length)|0],
-      sz: rand(10,15), rot: rand(-Math.PI,Math.PI), vr: rand(-.25,.25),
-      hue: rand(200,215)
-    });
+  /* ---- the tornado swarm: every target glyph starts life inside the funnel ---- */
+  var P=[], funTop=cy-H*0.46, funH=H*0.92;
+  for(var i=0;i<targets.length;i++){
+    var t=targets[i];
+    var yf=(t.y-funTop)/funH; yf=Math.max(0,Math.min(1,yf));
+    P.push({tx:t.x, ty:t.y, x:0,y:0, ph:rnd(0,TWO), yf:yf, spin:rnd(3.0,5.2),
+      rad:rnd(0.7,1.15), laid:false, laying:false, lt:0,
+      ch:(Math.random()<0.5?'0':'1'), sz:rnd(9,13), white:Math.random()<0.16});
   }
-  // ambient chaos particles (data fragments + binary) that never form — they drift & fade
-  var AMB = Math.min(70, Math.round(W/16));
-  for(var j=0;j<AMB;j++){
-    var isData = Math.random()<0.45;
-    particles.push({
-      x: rand(0,W), y: rand(0,H), vx: rand(-6,6), vy: rand(-6,6),
-      form:false, ambient:true,
-      ch: isData ? DATA[(Math.random()*DATA.length)|0] : GLYPHS[(Math.random()*GLYPHS.length)|0],
-      sz: isData ? rand(11,15) : rand(11,18), rot: rand(-.5,.5), vr: rand(-.4,.4),
-      alpha: rand(.12,.5)
-    });
+  /* pure-chaos digits that never become letters — they get flung out to the right */
+  var CH=[], NCH=Math.min(240, Math.round(W/6));
+  for(var j=0;j<NCH;j++) CH.push({ph:rnd(0,TWO), yf:rnd(0,1), spin:rnd(3,6), rad:rnd(0.6,1.3),
+    ch:(Math.random()<0.5?'0':'1'), sz:rnd(9,15), gone:false, vx:0, vy:0, x:0, y:0, a:rnd(.4,.9)});
+
+  /* ---- matrix rain backdrop ---- */
+  var cols=[], colW=16, NC=Math.ceil(W/colW);
+  for(var c=0;c<NC;c++) cols.push({y:rnd(-H,0), sp:rnd(2.5,7), len:rnd(6,22)});
+
+  function vortexX(p){ // eased sweep left -> right over the run
+    var e=1-Math.pow(1-Math.min(1,p),2.2); return -W*0.12 + e*(W*1.24);
+  }
+  function funnelRadius(yf){ // wide at top, pinched at bottom (classic tornado)
+    var maxR=W*0.16; return maxR*(0.18+0.95*yf);
   }
 
-  var start = null, DURATION = 1700, SETTLE = 2100;
-  var booted = false;
-  function boot(){ if(booted) return; booted=true; document.body.classList.add('booted'); }
+  var start=null, SWEEP=2200, BOOT=2900, booted=false;
+  function boot(){ if(booted)return; booted=true; document.body.classList.add('booted'); }
 
-  function frame(ts){
-    if(start===null) start = ts;
-    var el = ts - start;
-    var p = Math.min(1, el/DURATION);
-    var ease = 1 - Math.pow(1-p, 3);            // easeOutCubic
+  function rain(alpha){
+    ctx.font="700 14px 'JetBrains Mono', monospace"; ctx.textAlign='center';
+    for(var c=0;c<NC;c++){
+      var col=cols[c], x=c*colW+colW/2;
+      for(var k=0;k<col.len;k++){
+        var y=col.y-k*16; if(y<0||y>H) continue;
+        var f=(1-k/col.len);
+        ctx.globalAlpha=alpha*f*(k===0?1:0.55);
+        ctx.fillStyle=k===0?'#d6ffe9':'#1f9b57';
+        ctx.fillText(Math.random()<0.5?'0':'1', x, y);
+      }
+      col.y+=col.sp; if(col.y-col.len*16>H) { col.y=rnd(-H*0.5,0); col.sp=rnd(2.5,7); col.len=rnd(6,22); }
+    }
+    ctx.globalAlpha=1;
+  }
+
+  function draw(ts){
+    if(start===null) start=ts;
+    var el=ts-start, p=el/SWEEP, vx=vortexX(p), tnow=el/1000;
     ctx.clearRect(0,0,W,H);
+    rain(el<BOOT?0.5:0.16);
 
-    for(var k=0;k<particles.length;k++){
-      var a = particles[k];
-      if(a.form){
-        // chaos phase: free flight + jitter; then spring toward target
-        if(el < 380){
-          a.x += a.vx; a.y += a.vy;
-          a.vx *= 0.99; a.vy *= 0.99;
-          if(a.x<0||a.x>W) a.vx*=-1; if(a.y<0||a.y>H) a.vy*=-1;
-        } else {
-          a.x += (a.tx - a.x) * (0.04 + 0.10*ease);
-          a.y += (a.ty - a.y) * (0.04 + 0.10*ease);
-        }
-        a.rot += a.vr * (1-ease);
-        var lit = ease;                         // gray chaos -> bright order
-        var L = 55 + 35*lit, S = 30 + 70*lit;
-        ctx.save();
-        ctx.translate(a.x, a.y); ctx.rotate(a.rot*(1-ease));
-        ctx.globalAlpha = 0.35 + 0.65*lit;
-        ctx.fillStyle = 'hsl('+a.hue+','+S+'%,'+L+'%)';
-        if(lit>0.6){ ctx.shadowColor='rgba(59,155,255,'+( (lit-0.6)*1.2 )+')'; ctx.shadowBlur=8; }
-        ctx.font = '700 ' + a.sz + "px 'JetBrains Mono', monospace";
-        ctx.textAlign='center'; ctx.textBaseline='middle';
-        ctx.fillText(a.ch, 0, 0);
-        ctx.restore();
+    // chaos digits swirling in the funnel; flung out once the vortex exits
+    ctx.font="700 12px 'JetBrains Mono', monospace"; ctx.textAlign='center'; ctx.textBaseline='middle';
+    for(var j=0;j<CH.length;j++){
+      var d=CH[j];
+      if(!d.gone){
+        var ang=d.ph+tnow*d.spin, r=funnelRadius(d.yf)*d.rad;
+        d.x=vx+Math.cos(ang)*r; d.y=funTop+d.yf*funH+Math.sin(ang)*r*0.18;
+        var depth=(Math.sin(ang)+1)/2; // 0 back .. 1 front
+        ctx.globalAlpha=d.a*(0.3+0.7*depth); ctx.font='700 '+(d.sz*(0.7+0.5*depth))+"px 'JetBrains Mono', monospace";
+        ctx.fillStyle=depth>0.6?'#9dffce':'#1aa15a'; ctx.fillText(d.ch,d.x,d.y);
+        if(vx>W*1.02){ d.gone=true; d.vx=rnd(6,16); d.vy=rnd(-3,3); }
       } else {
-        // ambient drift, fade out as order forms
-        a.x += a.vx*0.6; a.y += a.vy*0.6; a.rot += a.vr*0.04;
-        if(a.x<-40)a.x=W+40; if(a.x>W+40)a.x=-40; if(a.y<-20)a.y=H+20; if(a.y>H+20)a.y=-20;
-        var fade = Math.max(0, 1 - p*1.25);
-        ctx.save();
-        ctx.translate(a.x,a.y); ctx.rotate(a.rot);
-        ctx.globalAlpha = a.alpha * fade;
-        ctx.fillStyle = '#5f7095';
-        ctx.font = '600 ' + a.sz + "px 'JetBrains Mono', monospace";
-        ctx.fillText(a.ch, 0, 0);
-        ctx.restore();
+        d.x+=d.vx; d.y+=d.vy; d.a*=0.95;
+        if(d.a>0.02){ ctx.globalAlpha=d.a; ctx.fillStyle='#1aa15a'; ctx.fillText(d.ch,d.x,d.y); }
       }
     }
 
-    if(el > SETTLE - 700) boot();
-    if(el < SETTLE + 4000){ requestAnimationFrame(frame); }
-    else { ambientLoop(); }   // hand off to a calm drift loop
-  }
-
-  // gentle post-intro drift of the formed glyphs so the hero stays alive
-  function ambientLoop(){
-    var t0 = null;
-    function calm(ts){
-      if(t0===null) t0=ts;
-      ctx.clearRect(0,0,W,H);
-      for(var k=0;k<particles.length;k++){
-        var a=particles[k]; if(!a.form) continue;
-        var dx = Math.sin((ts/2600)+a.tx*0.01)*1.4;
-        var dy = Math.cos((ts/3000)+a.ty*0.01)*1.4;
-        ctx.save();
-        ctx.translate(a.tx+dx, a.ty+dy);
-        ctx.globalAlpha=0.9; ctx.fillStyle='hsl('+a.hue+',92%,72%)';
-        ctx.font='700 '+a.sz+"px 'JetBrains Mono', monospace";
-        ctx.textAlign='center'; ctx.textBaseline='middle';
-        ctx.fillText(a.ch,0,0);
-        ctx.restore();
+    // the letter-builders: swirl in the funnel, then LAY into the wordmark as the vortex passes
+    for(var i=0;i<P.length;i++){
+      var a=P[i];
+      if(!a.laid){
+        if(!a.laying && vx > a.tx-6){ a.laying=true; a.lt=0; }
+        if(!a.laying){
+          var ang2=a.ph+tnow*a.spin, r2=funnelRadius(a.yf)*a.rad;
+          a.x=vx+Math.cos(ang2)*r2; a.y=funTop+a.yf*funH+Math.sin(ang2)*r2*0.18;
+        } else {
+          a.lt+=0.085; var e=a.lt<1?(1-Math.pow(1-a.lt,3)):1;
+          a.x+=(a.tx-a.x)*(0.18+0.12*e); a.y+=(a.ty-a.y)*(0.18+0.12*e);
+          if(Math.abs(a.x-a.tx)<0.6 && Math.abs(a.y-a.ty)<0.6){ a.laid=true; a.x=a.tx; a.y=a.ty; }
+        }
+        ctx.globalAlpha=0.92; ctx.font='700 '+a.sz+"px 'JetBrains Mono', monospace";
+        ctx.fillStyle=a.laying? (a.white?'#eafff4':'#5dffa6') : '#33d97e';
+      } else {
+        var br=0.85+0.15*Math.sin(tnow*2+a.ph);
+        ctx.globalAlpha=br; ctx.font='700 '+a.sz+"px 'JetBrains Mono', monospace";
+        ctx.fillStyle=a.white?'#ffffff':'#56ffa2';
       }
-      requestAnimationFrame(calm);
+      ctx.fillText(a.ch,a.x,a.y);
     }
-    requestAnimationFrame(calm);
+    ctx.globalAlpha=1;
+
+    if(el>BOOT-650) boot();
+    requestAnimationFrame(draw);
   }
 
-  function skipNow(){
-    // jump particles to formed positions instantly
-    for(var k=0;k<particles.length;k++){ var a=particles[k]; if(a.form){ a.x=a.tx; a.y=a.ty; a.rot=0; } }
-    boot(); ambientLoop();
-  }
+  function skipNow(){ for(var i=0;i<P.length;i++){var a=P[i]; a.laid=true; a.x=a.tx; a.y=a.ty;} for(var j=0;j<CH.length;j++)CH[j].gone=true; boot(); }
   document.getElementById('skip').addEventListener('click', skipNow);
 
-  if(reduce){ skipNow(); }
-  else { requestAnimationFrame(frame); }
+  if(reduce){ skipNow(); requestAnimationFrame(function loop(ts){ ctx.clearRect(0,0,W,H);
+      for(var i=0;i<P.length;i++){var a=P[i]; ctx.globalAlpha=1; ctx.fillStyle=a.white?'#fff':'#56ffa2'; ctx.font='700 '+a.sz+"px 'JetBrains Mono', monospace"; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(a.ch,a.tx,a.ty);} }); }
+  else requestAnimationFrame(draw);
 
-  // rebuild on resize (debounced)
-  var rz; window.addEventListener('resize', function(){
-    clearTimeout(rz); rz=setTimeout(function(){ size(); targets=buildTargets();
-      for(var k=0,ti=0;k<particles.length;k++){ if(particles[k].form && targets[ti]){ particles[k].tx=targets[ti].x; particles[k].ty=targets[ti].y; ti++; } }
-    },180);
-  });
+  var rz; window.addEventListener('resize', function(){ clearTimeout(rz); rz=setTimeout(function(){
+    size(); targets=buildTargets();
+    for(var i=0,ti=0;i<P.length;i++){ if(targets[ti]){ P[i].tx=targets[ti].x; P[i].ty=targets[ti].y; if(P[i].laid){P[i].x=P[i].tx;P[i].y=P[i].ty;} ti++; } }
+    cols=[]; NC=Math.ceil(W/colW); for(var c=0;c<NC;c++) cols.push({y:rnd(-H,0),sp:rnd(2.5,7),len:rnd(6,22)});
+  },180); });
 
-  // nav solidify
   var nav=document.getElementById('nav');
   window.addEventListener('scroll',function(){ nav.classList.toggle('solid', window.scrollY>24); }, {passive:true});
 })();
